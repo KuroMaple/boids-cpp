@@ -2,9 +2,16 @@
 
 int main()
 {
-	sf::RenderWindow window( sf::VideoMode( { 200, 200 } ), "SFML works!" );
-	sf::CircleShape shape( 100.f );
-	shape.setFillColor( sf::Color::Green );
+	sf::RenderWindow window( sf::VideoMode( { 700, 500 } ), "Boids CPP" );
+
+	sf::ConvexShape bird;
+	bird.setPointCount(3);
+	bird.setPoint(0, sf::Vector2f(0, 0));
+	bird.setPoint(1, sf::Vector2f(0, 10));
+	bird.setPoint(2, sf::Vector2f(25, 5));
+	bird.setOutlineColor(sf::Color::Green);
+	bird.setOutlineThickness(5);
+	bird.setPosition( { 100, 100 } );
 
 	while ( window.isOpen() )
 	{
@@ -15,7 +22,7 @@ int main()
 		}
 
 		window.clear();
-		window.draw( shape );
+		window.draw( bird );
 		window.display();
 	}
 }
