@@ -26,7 +26,7 @@ Renderer::Renderer()
     m_shape.setOutlineThickness(kOutlineThickness);
 }
 
-void Renderer::Draw(std::vector<Boid> boidsVector, sf::RenderWindow &gameWindow)
+void Renderer::Draw(const std::vector<Boid>& boidsVector, sf::RenderWindow &gameWindow)
 {
     for (const Boid& boid : boidsVector)
     {

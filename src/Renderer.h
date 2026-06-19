@@ -15,7 +15,7 @@ class Renderer
 {
 public:
     Renderer();
-    void Draw(std::vector<Boid> boidsVector, sf::RenderWindow& gameWindow);
+    void Draw(const std::vector<Boid>& boidsVector, sf::RenderWindow& gameWindow);
 
 private:
     sf::ConvexShape m_shape;
