@@ -11,16 +11,17 @@ void Game::BeginPlay()
     m_window.create(sf::VideoMode( { WINDOW_WIDTH, WINDOW_HEIGHT } ), WINDOW_TITLE );
     m_window.setFramerateLimit(FPS);
     
-    Boid testBoid = Boid(sf::Vector2f(100,100), sf::Vector2f(1,0));
+    Boid testBoid = Boid(sf::Vector2f(100,100), sf::Vector2f(100,100));
     m_boidsVector.push_back(testBoid);
     GameLoop();
 }
 
 void Game::GameLoop()
 {
+    m_clock.restart();
     while (m_window.isOpen())
     {
-        float deltaTime = m_clock.getElapsedTime().asSeconds();
+        float deltaTime = m_clock.restart().asSeconds();
 
         
         while (const std::optional event = m_window.pollEvent())
