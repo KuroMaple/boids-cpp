@@ -36,17 +36,17 @@ void Game::GameLoop()
                 m_window.close();
             }
         }
+        Update(timeElapsed);
         Render();
     }
 }
 
-void Game::Update()
+void Game::Update(float timeElapsed)
 {
-    // sf::Vector2f oldPosition = m_shape.getPosition();
-    // if (oldPosition.x >= 700) {
-    //     oldPosition.x = 0;
-    // }
-		  //
+    float velocity = 1;
+    sf::Vector2f oldPosition = m_shape.getPosition();
+    m_shape.move({ velocity * timeElapsed, 0 });
+    
     // m_shape.setPosition( { oldPosition.x + 1, oldPosition.y } );
 }
 

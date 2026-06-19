@@ -14,7 +14,7 @@ public:
     
     void BeginPlay();
     void GameLoop();
-    void Update();
+    void Update(float timeElapsed);
     void Render();
 
 private:
