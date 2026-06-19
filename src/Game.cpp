@@ -38,9 +38,10 @@ void Game::GameLoop()
 
 void Game::Update(float deltaTime)
 {
+    sf::Vector2f worldBounds{ WINDOW_WIDTH, WINDOW_HEIGHT};
     for (auto &boid : m_boidsVector)
     {
-        boid.Update(deltaTime);
+        boid.Update(deltaTime, worldBounds);
     }
 }
 
