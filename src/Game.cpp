@@ -5,24 +5,15 @@
 #include "Game.h"
 
 sf::RenderWindow Game::m_window;
+sf::Clock Game::m_clock;
 
 void Game::BeginPlay()
 {
     if (m_window.isOpen()) return;
     
     m_window.create(sf::VideoMode( { WINDOW_WIDTH, WINDOW_HEIGHT } ), "Boids CPP" );
-
-    while (m_window.isOpen())
-    {
-        while (const std::optional event = m_window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-            {
-                m_window.close();
-            }
-        }
-        
-    }
+    m_window.setFramerateLimit(60);
+    GameLoop();
     
     // bird->setPointCount(3);
     // bird->setPoint(0, sf::Vector2f(0, 0));
@@ -31,6 +22,27 @@ void Game::BeginPlay()
     // bird->setOutlineColor(sf::Color::Green);
     // bird->setOutlineThickness(5);
     // bird->setPosition( { 100, 100 } );
+}
+
+void Game::GameLoop()
+{
+    while (m_window.isOpen())
+    {
+        float timeElapsed = Game::m_clock.getElapsedTime().asSeconds();
+
+        m_window.clear(sf::Color::Black);
+        
+        while (const std::optional event = m_window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+            {
+                m_window.close();
+            }
+        }
+
+        m_window.display();
+        
+    }
 }
 
 void Game::Update()

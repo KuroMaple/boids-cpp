@@ -13,9 +13,11 @@ public:
     const static int WINDOW_HEIGHT = 600;
     
     static void BeginPlay();
+    static void GameLoop();
     void HandleInput();
     void Update();
     void Render();
+    
 
     sf::RenderWindow GetWindow();
 private:
