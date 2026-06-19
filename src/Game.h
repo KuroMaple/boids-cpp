@@ -12,19 +12,16 @@ public:
     const static int WINDOW_WIDTH = 800;
     const static int WINDOW_HEIGHT = 600;
     
-    static void BeginPlay();
-    static void GameLoop();
-    void HandleInput();
+    void BeginPlay();
+    void GameLoop();
     void Update();
     void Render();
-    
 
-    sf::RenderWindow GetWindow();
 private:
     
-    static sf::RenderWindow m_window; 
-    static sf::Clock m_clock;
-    // sf::ConvexShape m_shape;
+    sf::RenderWindow m_window; 
+    sf::Clock m_clock;
+    sf::ConvexShape m_shape = sf::ConvexShape();
 };
 
 

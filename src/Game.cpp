@@ -4,24 +4,22 @@
 
 #include "Game.h"
 
-sf::RenderWindow Game::m_window;
-sf::Clock Game::m_clock;
-
 void Game::BeginPlay()
 {
     if (m_window.isOpen()) return;
     
     m_window.create(sf::VideoMode( { WINDOW_WIDTH, WINDOW_HEIGHT } ), "Boids CPP" );
     m_window.setFramerateLimit(60);
-    GameLoop();
     
-    // bird->setPointCount(3);
-    // bird->setPoint(0, sf::Vector2f(0, 0));
-    // bird->setPoint(1, sf::Vector2f(0, 10));
-    // bird->setPoint(2, sf::Vector2f(25, 5));
-    // bird->setOutlineColor(sf::Color::Green);
-    // bird->setOutlineThickness(5);
-    // bird->setPosition( { 100, 100 } );
+    m_shape.setPointCount(3);
+    m_shape.setPoint(0, sf::Vector2f(0, 0));
+    m_shape.setPoint(1, sf::Vector2f(0, 10));
+    m_shape.setPoint(2, sf::Vector2f(25, 5));
+    m_shape.setOutlineColor(sf::Color::Green);
+    m_shape.setOutlineThickness(5);
+    m_shape.setPosition( { 100, 100 } );
+    
+    GameLoop();
 }
 
 void Game::GameLoop()
@@ -30,7 +28,6 @@ void Game::GameLoop()
     {
         float timeElapsed = Game::m_clock.getElapsedTime().asSeconds();
 
-        m_window.clear(sf::Color::Black);
         
         while (const std::optional event = m_window.pollEvent())
         {
@@ -39,30 +36,24 @@ void Game::GameLoop()
                 m_window.close();
             }
         }
-
-        m_window.display();
-        
+        Render();
     }
 }
 
 void Game::Update()
 {
-    // sf::Vector2f oldPosition = bird->getPosition();
+    // sf::Vector2f oldPosition = m_shape.getPosition();
     // if (oldPosition.x >= 700) {
     //     oldPosition.x = 0;
     // }
 		  //
-    // bird->setPosition( { oldPosition.x + 1, oldPosition.y } );
+    // m_shape.setPosition( { oldPosition.x + 1, oldPosition.y } );
 }
 
 void Game::Render()
 {
     m_window.clear();
-    // m_window.draw(*bird);
+    m_window.draw(m_shape);
     m_window.display();
 }
 
-sf::RenderWindow Game::GetWindow()
-{
-    return std::move(m_window);
-}

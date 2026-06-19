@@ -2,6 +2,7 @@
 
 int main()
 {
-    Game::BeginPlay();
+    Game* game = new Game();
+    game->BeginPlay();
     return 0;
 }
