@@ -2,7 +2,7 @@
 
 int main()
 {
-    Game* game = new Game();
-    game->BeginPlay();
+    Game game = Game();
+    game.BeginPlay();
     return 0;
 }

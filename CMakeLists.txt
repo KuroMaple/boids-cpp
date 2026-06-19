@@ -14,7 +14,11 @@ FetchContent_MakeAvailable(SFML)
 
 add_executable(main src/main.cpp
         src/Game.cpp
-        src/Game.h)
+        src/Game.h
+        src/Boid.cpp
+        src/Boid.h
+        src/Renderer.cpp
+        src/Renderer.h)
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
 
