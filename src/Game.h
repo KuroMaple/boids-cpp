@@ -4,6 +4,7 @@
 
 #ifndef CMAKESFMLPROJECT_GAME_H
 #define CMAKESFMLPROJECT_GAME_H
+#include <random>
 #include <SFML/Graphics.hpp>
 
 #include "Boid.h"
@@ -12,10 +13,12 @@
 class Game
 {
 public:
-    const static int WINDOW_WIDTH = 800;
-    const static int WINDOW_HEIGHT = 600;
-    const static int FPS = 60;
-    const static int BOIDS_COUNT = 1;
+    static constexpr int WINDOW_WIDTH = 800;
+    static constexpr int WINDOW_HEIGHT = 600;
+    static constexpr int FPS = 60;
+    static constexpr int BOIDS_COUNT = 50;
+    static constexpr auto BOID_VELOCITY = sf::Vector2f(100, 100);
+    
     inline const static std::string WINDOW_TITLE = "Boids CPP";
     
     void BeginPlay();
@@ -24,11 +27,17 @@ public:
     void Render();
 
 private:
-    
     sf::RenderWindow m_window; 
     sf::Clock m_clock;
     std::vector<Boid> m_boidsVector;
     Renderer m_renderer;
+    std::mt19937 m_rng;
+    std::uniform_int_distribution<> m_distributionX;
+    std::uniform_int_distribution<> m_distributionY;
+    
+
+    void SpawnBoids();
+    void InitializeRandomEngine();
 };
 
 

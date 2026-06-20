@@ -3,6 +3,7 @@
 //
 
 #include "Game.h"
+#include <random>
 
 void Game::BeginPlay()
 {
@@ -10,9 +11,8 @@ void Game::BeginPlay()
     
     m_window.create(sf::VideoMode( { WINDOW_WIDTH, WINDOW_HEIGHT } ), WINDOW_TITLE );
     m_window.setFramerateLimit(FPS);
-    
-    Boid testBoid = Boid(sf::Vector2f(100,100), sf::Vector2f(100,100));
-    m_boidsVector.push_back(testBoid);
+    InitializeRandomEngine();
+    SpawnBoids();
     GameLoop();
 }
 
@@ -38,10 +38,9 @@ void Game::GameLoop()
 
 void Game::Update(float deltaTime)
 {
-    sf::Vector2f worldBounds{ WINDOW_WIDTH, WINDOW_HEIGHT};
     for (auto &boid : m_boidsVector)
     {
-        boid.Update(deltaTime, worldBounds);
+        boid.Update(deltaTime, { WINDOW_WIDTH, WINDOW_HEIGHT});
     }
 }
 
@@ -50,5 +49,28 @@ void Game::Render()
     m_window.clear();
     m_renderer.Draw(m_boidsVector, m_window);
     m_window.display();
+}
+
+void Game::SpawnBoids()
+{
+    for (int i = 0; i < BOIDS_COUNT; ++i)
+    {
+        auto currentBoid = Boid(
+            {
+                static_cast<float>(m_distributionX(m_rng)),
+                 static_cast<float>(m_distributionY(m_rng))
+            },
+            BOID_VELOCITY);
+        m_boidsVector.push_back(currentBoid);
+        
+    }
+}
+
+void Game::InitializeRandomEngine()
+{
+    std::random_device randomDevice;
+    m_rng.seed(randomDevice());
+    m_distributionX = std::uniform_int_distribution(0, WINDOW_WIDTH);
+    m_distributionY = std::uniform_int_distribution(0, WINDOW_HEIGHT);
 }
 

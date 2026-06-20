@@ -4,7 +4,7 @@
 
 #include "Renderer.h"
 
-namespace
+namespace renderConstants
 {
     constexpr std::array<sf::Vector2f, 4> kBoidUnit = {
         {
@@ -18,12 +18,14 @@ namespace
 }
 Renderer::Renderer()
 {
-    m_shape.setPointCount(kBoidUnit.size());
-    for (std::size_t i = 0; i < kBoidUnit.size(); ++i)
-        m_shape.setPoint(i, kBoidUnit[i] * Boid::RADIUS);  
+    m_shape.setPointCount(renderConstants::kBoidUnit.size());
+    for (std::size_t i = 0; i < renderConstants::kBoidUnit.size(); ++i)
+    {
+        m_shape.setPoint(i, renderConstants::kBoidUnit[i] * Boid::RADIUS);  
+    }
     m_shape.setOrigin({0,0});
     m_shape.setOutlineColor(sf::Color::Green);
-    m_shape.setOutlineThickness(kOutlineThickness);
+    m_shape.setOutlineThickness(renderConstants::kOutlineThickness);
 }
 
 void Renderer::Draw(const std::vector<Boid>& boidsVector, sf::RenderWindow &gameWindow)
