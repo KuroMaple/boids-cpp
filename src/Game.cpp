@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include <random>
+#include <numbers>
 
 void Game::BeginPlay()
 {
@@ -60,7 +61,10 @@ void Game::SpawnBoids()
                 static_cast<float>(m_distributionX(m_rng)),
                  static_cast<float>(m_distributionY(m_rng))
             },
-            BOID_VELOCITY);
+            {
+                std::cos(static_cast<float>(m_distributionAngle(m_rng))) * BOID_SPEED,
+                std::sin(static_cast<float>(m_distributionAngle(m_rng))) * BOID_SPEED
+            });
         m_boidsVector.push_back(currentBoid);
         
     }
@@ -70,7 +74,8 @@ void Game::InitializeRandomEngine()
 {
     std::random_device randomDevice;
     m_rng.seed(randomDevice());
-    m_distributionX = std::uniform_int_distribution(0, WINDOW_WIDTH);
-    m_distributionY = std::uniform_int_distribution(0, WINDOW_HEIGHT);
+    m_distributionX = std::uniform_int_distribution<>(Boid::RADIUS, WINDOW_WIDTH - Boid::RADIUS);
+    m_distributionY = std::uniform_int_distribution<>(Boid::RADIUS, WINDOW_HEIGHT - Boid::RADIUS);
+    m_distributionAngle = std::uniform_real_distribution<>(0, 2 * std::numbers::pi);
 }
 

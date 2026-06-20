@@ -16,7 +16,8 @@ public:
     static constexpr int WINDOW_WIDTH = 800;
     static constexpr int WINDOW_HEIGHT = 600;
     static constexpr int FPS = 60;
-    static constexpr int BOIDS_COUNT = 50;
+    static constexpr int BOIDS_COUNT = 100;
+    static constexpr int BOID_SPEED = 100;
     static constexpr auto BOID_VELOCITY = sf::Vector2f(100, 100);
     
     inline const static std::string WINDOW_TITLE = "Boids CPP";
@@ -34,7 +35,7 @@ private:
     std::mt19937 m_rng;
     std::uniform_int_distribution<> m_distributionX;
     std::uniform_int_distribution<> m_distributionY;
-    
+    std::uniform_real_distribution<> m_distributionAngle;
 
     void SpawnBoids();
     void InitializeRandomEngine();
