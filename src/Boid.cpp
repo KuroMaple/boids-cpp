@@ -12,11 +12,12 @@ Boid::Boid(sf::Vector2f startPosition, sf::Vector2f startVelocity)
 void Boid::Update(float deltaTime, sf::Vector2f worldBounds)
 {
     sf::Vector2f targetNewPosition = m_position + m_velocity * deltaTime;
-    if (targetNewPosition.x - RADIUS <= 0 || targetNewPosition.x + RADIUS >= worldBounds.x)
+    if (targetNewPosition.x - RADIUS <= 0 && m_velocity.x < 0 ||
+        targetNewPosition.x + RADIUS >= worldBounds.x && m_velocity.x > 0)
     {
        m_velocity.x = -m_velocity.x; 
     }
-    if (targetNewPosition.y - RADIUS <= 0 || targetNewPosition.y + RADIUS >= worldBounds.y)
+    if (targetNewPosition.y - RADIUS <= 0 && m_velocity.y < 0 || targetNewPosition.y + RADIUS >= worldBounds.y && m_velocity.y > 0)
     {
         m_velocity.y = -m_velocity.y;
     }

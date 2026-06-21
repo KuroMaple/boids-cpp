@@ -74,8 +74,8 @@ void Game::InitializeRandomEngine()
 {
     std::random_device randomDevice;
     m_rng.seed(randomDevice());
-    m_distributionX = std::uniform_int_distribution<>(Boid::RADIUS, WINDOW_WIDTH - Boid::RADIUS);
-    m_distributionY = std::uniform_int_distribution<>(Boid::RADIUS, WINDOW_HEIGHT - Boid::RADIUS);
+    m_distributionX = std::uniform_int_distribution<>(0, WINDOW_WIDTH);
+    m_distributionY = std::uniform_int_distribution<>(0, WINDOW_HEIGHT);
     m_distributionAngle = std::uniform_real_distribution<>(0, 2 * std::numbers::pi);
 }
 
