@@ -62,8 +62,8 @@ void Game::SpawnBoids()
                  static_cast<float>(m_distributionY(m_rng))
             },
             {
-                std::cos(static_cast<float>(m_distributionAngle(m_rng))) * BOID_SPEED,
-                std::sin(static_cast<float>(m_distributionAngle(m_rng))) * BOID_SPEED
+                std::cos(static_cast<float>(m_distributionAngle(m_rng))) * BOID_MAX_SPEED,
+                std::sin(static_cast<float>(m_distributionAngle(m_rng))) * BOID_MAX_SPEED
             });
         m_boidsVector.push_back(currentBoid);
         

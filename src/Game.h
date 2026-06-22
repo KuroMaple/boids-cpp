@@ -13,12 +13,14 @@
 class Game
 {
 public:
-    static constexpr int WINDOW_WIDTH = 800;
-    static constexpr int WINDOW_HEIGHT = 600;
+    static constexpr int WINDOW_WIDTH = 1000;
+    static constexpr int WINDOW_HEIGHT = 800;
     static constexpr int FPS = 60;
     static constexpr int BOIDS_COUNT = 100;
-    static constexpr int BOID_SPEED = 100;
+    static constexpr int BOID_MAX_SPEED = 100;
     static constexpr auto BOID_VELOCITY = sf::Vector2f(100, 100);
+    static constexpr int EDGE_MARGIN = 100;
+    static constexpr float TURN_FACTOR = 3;
     
     inline const static std::string WINDOW_TITLE = "Boids CPP";
     
