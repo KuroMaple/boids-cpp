@@ -13,12 +13,34 @@ Boid::Boid(int boidId, sf::Vector2f startPosition, sf::Vector2f startVelocity)
     m_velocity = startVelocity;
 }
 
-void Boid::Update(float deltaTime, float close_dx, float close_dy)
+void Boid::Update(float deltaTime, float closeDx, float closeDy,
+    int neighbourCount, float xNeighbourVelocityAvg, float yNeighbourVelocityAvg)
 {
-    m_velocity.x += close_dx * Game::AVOID_FACTOR;
-    m_velocity.y += close_dy * Game::AVOID_FACTOR;
+    // Seperation
+    m_velocity.x += closeDx * Game::AVOID_FACTOR;
+    m_velocity.y += closeDy * Game::AVOID_FACTOR;
+
+    // Alignment
+    if (neighbourCount > 0)
+    {
+        m_velocity.x += (xNeighbourVelocityAvg - m_velocity.x) * Game::MATCHING_FACTOR;
+        m_velocity.y += (yNeighbourVelocityAvg - m_velocity.y) * Game::MATCHING_FACTOR;
+    }
+
+    // Speed tuning
+    auto currentSpeed = std::sqrt(m_velocity.x * m_velocity.x + m_velocity.y * m_velocity.y);
+    if (currentSpeed > Game::BOID_MAX_SPEED)
+    {
+        m_velocity.x = (m_velocity.x / currentSpeed) * Game::BOID_MAX_SPEED;
+        m_velocity.y = (m_velocity.y / currentSpeed) * Game::BOID_MAX_SPEED;
+    }
+    else if (currentSpeed < Game::BOID_MIN_SPEED)
+    {
+        m_velocity.x = (m_velocity.x / currentSpeed) * Game::BOID_MIN_SPEED;
+        m_velocity.y = (m_velocity.y / currentSpeed) * Game::BOID_MIN_SPEED;
+    }
     
-    // Majestic turning
+    // Turning away from edges
     if (m_position.x < Game::EDGE_MARGIN)
     {
         const auto turnFactorRatio = (Game::EDGE_MARGIN - m_position.x) / Game::EDGE_MARGIN ;

@@ -41,20 +41,37 @@ void Game::Update(float deltaTime)
 {
     for (auto &currentBoid : m_boidsVector)
     {
-        float close_dx = 0;
-        float close_dy = 0;
+        float closeDx = 0;
+        float closeDy = 0;
+
+        float xVelocityAvg = 0;
+        float yVelocityAvg = 0;
+        int neighbouringBoids = 0;
         
         for (auto &otherBoid : m_boidsVector)
         {
             if (otherBoid == currentBoid) continue;
+            
             if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < PROTECTED_RANGE
                 && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < PROTECTED_RANGE)
             {
-                close_dx += currentBoid.GetPosition().x - otherBoid.GetPosition().x;
-                close_dy += currentBoid.GetPosition().y - otherBoid.GetPosition().y;
+                closeDx += currentBoid.GetPosition().x - otherBoid.GetPosition().x;
+                closeDy += currentBoid.GetPosition().y - otherBoid.GetPosition().y;
+            }
+
+            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < VISUAL_RANGE
+                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < VISUAL_RANGE)
+            {
+                xVelocityAvg += otherBoid.GetVelocity().x;
+                yVelocityAvg += otherBoid.GetVelocity().y;
+                ++neighbouringBoids;
             }
         }
-        currentBoid.Update(deltaTime, close_dx, close_dy);
+
+        xVelocityAvg /= neighbouringBoids;
+        yVelocityAvg /= neighbouringBoids;
+        
+        currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg);
     }
 }
 

@@ -12,7 +12,8 @@ class Boid
 public:
     Boid(int boidID, sf::Vector2f startPosition, sf::Vector2f startVelocity);
 
-    void Update(float deltaTime, float close_dx, float close_dy);
+    void Update(float deltaTime, float closeDx, float closeDy,
+        int neighbourCount, float xNeighbourVelocityAvg, float yNeighbourVelocityAvg);
     [[nodiscard]] sf::Vector2f GetPosition() const { return m_position; }
     [[nodiscard]] sf::Vector2f GetVelocity() const { return m_velocity; }
 
