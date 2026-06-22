@@ -10,17 +10,20 @@
 class Boid
 {
 public:
-    Boid(sf::Vector2f startPosition, sf::Vector2f startVelocity);
+    Boid(int boidID, sf::Vector2f startPosition, sf::Vector2f startVelocity);
 
-    void Update(float deltaTime, sf::Vector2f worldBounds);
+    void Update(float deltaTime, float close_dx, float close_dy);
     [[nodiscard]] sf::Vector2f GetPosition() const { return m_position; }
     [[nodiscard]] sf::Vector2f GetVelocity() const { return m_velocity; }
 
     static constexpr float RADIUS = 20.f;
+
+    bool operator==(const Boid& otherBoid) const;
 private:
     sf::Vector2f m_position;
     sf::Vector2f m_velocity;
-    
+
+    int m_id;
 };
 
 

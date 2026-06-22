@@ -39,9 +39,22 @@ void Game::GameLoop()
 
 void Game::Update(float deltaTime)
 {
-    for (auto &boid : m_boidsVector)
+    for (auto &currentBoid : m_boidsVector)
     {
-        boid.Update(deltaTime, { WINDOW_WIDTH, WINDOW_HEIGHT});
+        float close_dx = 0;
+        float close_dy = 0;
+        
+        for (auto &otherBoid : m_boidsVector)
+        {
+            if (otherBoid == currentBoid) continue;
+            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < PROTECTED_RANGE
+                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < PROTECTED_RANGE)
+            {
+                close_dx += currentBoid.GetPosition().x - otherBoid.GetPosition().x;
+                close_dy += currentBoid.GetPosition().y - otherBoid.GetPosition().y;
+            }
+        }
+        currentBoid.Update(deltaTime, close_dx, close_dy);
     }
 }
 
@@ -57,6 +70,7 @@ void Game::SpawnBoids()
     for (int i = 0; i < BOIDS_COUNT; ++i)
     {
         auto currentBoid = Boid(
+            i + 1,
             {
                 static_cast<float>(m_distributionX(m_rng)),
                  static_cast<float>(m_distributionY(m_rng))
