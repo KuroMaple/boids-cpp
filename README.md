@@ -3,9 +3,9 @@
 
 A simulation of the Boids algorithm using C++
 
-## [WIP] Current State June 20, 2026
+## [WIP] Current State June 23, 2026
 
+## Demo Video (click to YouTube)
+[![Watch the demo](https://github.com/user-attachments/assets/30d977b8-b092-46ce-96b9-9783b6927199)](https://www.youtube.com/watch?v=JzXDcz_1Ba4)
 
-
-https://github.com/user-attachments/assets/fb10c631-3453-4797-be2d-1b519ecf3c16
 
