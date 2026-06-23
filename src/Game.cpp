@@ -47,6 +47,9 @@ void Game::Update(float deltaTime)
         float xVelocityAvg = 0;
         float yVelocityAvg = 0;
         int neighbouringBoids = 0;
+
+        float xPositionAvg = 0;
+        float yPositionAvg = 0;
         
         for (auto &otherBoid : m_boidsVector)
         {
@@ -64,14 +67,20 @@ void Game::Update(float deltaTime)
             {
                 xVelocityAvg += otherBoid.GetVelocity().x;
                 yVelocityAvg += otherBoid.GetVelocity().y;
+
+                xPositionAvg += otherBoid.GetPosition().x;
+                yPositionAvg += otherBoid.GetPosition().y;
+                
                 ++neighbouringBoids;
             }
         }
-
+        
         xVelocityAvg /= neighbouringBoids;
         yVelocityAvg /= neighbouringBoids;
+        xPositionAvg /= neighbouringBoids;
+        yPositionAvg /= neighbouringBoids;
         
-        currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg);
+        currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg, xPositionAvg, yPositionAvg);
     }
 }
 

@@ -14,7 +14,7 @@ Boid::Boid(int boidId, sf::Vector2f startPosition, sf::Vector2f startVelocity)
 }
 
 void Boid::Update(float deltaTime, float closeDx, float closeDy,
-    int neighbourCount, float xNeighbourVelocityAvg, float yNeighbourVelocityAvg)
+    int neighbourCount, float xNeighbourVelocityAvg, float yNeighbourVelocityAvg, float xPositionAvg, float yPositionAvg)
 {
     // Seperation
     m_velocity.x += closeDx * Game::AVOID_FACTOR;
@@ -25,6 +25,13 @@ void Boid::Update(float deltaTime, float closeDx, float closeDy,
     {
         m_velocity.x += (xNeighbourVelocityAvg - m_velocity.x) * Game::MATCHING_FACTOR;
         m_velocity.y += (yNeighbourVelocityAvg - m_velocity.y) * Game::MATCHING_FACTOR;
+    }
+
+    // Cohesion
+    if (neighbourCount > 0)
+    {
+        m_velocity.x += (xPositionAvg - m_velocity.x) * Game::CENTERING_FACTOR;
+        m_velocity.y += (yPositionAvg - m_velocity.y) * Game::CENTERING_FACTOR;
     }
 
     // Speed tuning
