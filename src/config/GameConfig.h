@@ -26,7 +26,7 @@ struct GameConfig
 
 
     // Commonly Tuned Parameters
-    static constexpr int BOIDS_COUNT = 10;
+    static constexpr int BOIDS_COUNT = 2000;
     static constexpr float TURN_FACTOR = 10;
     static constexpr float PROTECTED_RANGE = 60;
 };

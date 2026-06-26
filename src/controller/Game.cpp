@@ -6,7 +6,6 @@
 #include <iostream>
 #include <random>
 #include <numbers>
-
 #include "../config/GameConfig.h"
 
 Game::Game()
@@ -43,8 +42,25 @@ void Game::GameLoop()
             }
         }
 
+        // Custom profiling
+        auto frameStart = std::chrono::high_resolution_clock::now();
         Update(deltaTime);
+        auto updateEnd = std::chrono::high_resolution_clock::now();
         Render();
+        auto frameEnd = std::chrono::high_resolution_clock::now();
+
+        auto updateMs = std::chrono::duration<double, std::milli>(updateEnd - frameStart).count();
+        auto renderMs = std::chrono::duration<double, std::milli>(frameEnd - updateEnd).count();
+        auto frameMs = std::chrono::duration<double, std::milli>(frameEnd - frameStart).count();
+        auto fps = 1000.0 / frameMs;
+
+        std::string displayText = "Boids: " + std::to_string(GameConfig::BOIDS_COUNT) + "\n"
+                                    + "Update: " + std::to_string(updateMs) + " ms \n"
+                                    + "Render: " + std::to_string(renderMs) + " ms \n"
+                                    + "Frame: " + std::to_string(frameMs) + " ms \n"
+                                    + "FPS: " + std::to_string(fps);
+
+        SetText(displayText);
     }
 }
 
@@ -98,8 +114,8 @@ void Game::Update(float deltaTime)
 void Game::Render()
 {
     m_window.clear();
-    m_window.draw(*m_text);
     m_renderer.Draw(m_boidsVector, m_window);
+    m_window.draw(*m_text);
     m_window.display();
 }
 
