@@ -15,7 +15,7 @@ struct GameConfig
     static constexpr int WINDOW_WIDTH = 1000;
     static constexpr int WINDOW_HEIGHT = 700;
     static constexpr int FPS = 60;
-    static constexpr int BOID_MAX_SPEED = 200;
+
     static constexpr auto BOID_VELOCITY = sf::Vector2f(100, 100);
     static constexpr float TURN_FACTOR = 5;
     static constexpr float PROTECTED_RANGE = 10;
@@ -23,12 +23,14 @@ struct GameConfig
     static constexpr float AVOID_FACTOR = 0.03;
     static constexpr float VISUAL_RANGE = 40;
     static constexpr float MATCHING_FACTOR = 0.02;
-    static constexpr float BOID_MIN_SPEED = 200;
+    static constexpr float BOID_MIN_SPEED = 150;
+    static constexpr int BOID_MAX_SPEED = 200;
+
     static constexpr float CENTERING_FACTOR = 0.0005;
 
 
     // Commonly Tuned Parameters
-    static constexpr int BOIDS_COUNT = 900;
+    static constexpr int BOIDS_COUNT = 1500;
     static constexpr bool OPTIMIZATION_ACTIVE = false;
 };
 #endif //BOIDSCPP_GAMECONFIG_H

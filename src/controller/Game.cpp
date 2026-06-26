@@ -19,7 +19,6 @@ void Game::BeginPlay()
     
     m_window.create(sf::VideoMode( { GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE );
     m_window.setFramerateLimit(GameConfig::FPS);
-
     InitializeRandomEngine();
     InitializeFontAndText();
     SpawnBoids();
@@ -115,7 +114,7 @@ void Game::Update(float deltaTime)
 
 void Game::Render()
 {
-    m_window.clear();
+    m_window.clear(sf::Color(34, 36, 42));
     m_renderer.Draw(m_boidsVector, m_window);
     m_window.draw(*m_text);
     m_window.display();

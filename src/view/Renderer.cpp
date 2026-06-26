@@ -14,7 +14,7 @@ namespace renderConstants
             { -0.6f, -0.5f },  
         }};
 
-    constexpr float kOutlineThickness = 3.0f;
+    constexpr float kOutlineThickness = 1.0f;
 }
 Renderer::Renderer()
 {
@@ -24,7 +24,8 @@ Renderer::Renderer()
         m_shape.setPoint(i, renderConstants::kBoidUnit[i] * Boid::RADIUS);  
     }
     m_shape.setOrigin({0,0});
-    m_shape.setOutlineColor(sf::Color::Green);
+    m_shape.setFillColor(sf::Color(153, 255, 133));
+    m_shape.setOutlineColor(sf::Color::White);
     m_shape.setOutlineThickness(renderConstants::kOutlineThickness);
 }
 
