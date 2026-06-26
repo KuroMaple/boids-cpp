@@ -3,16 +3,26 @@
 //
 
 #include "Game.h"
+#include <iostream>
 #include <random>
 #include <numbers>
+
+#include "../config/GameConfig.h"
+
+Game::Game()
+{
+    InitializeFontAndText();
+}
 
 void Game::BeginPlay()
 {
     if (m_window.isOpen()) return;
     
-    m_window.create(sf::VideoMode( { WINDOW_WIDTH, WINDOW_HEIGHT } ), WINDOW_TITLE );
-    m_window.setFramerateLimit(FPS);
+    m_window.create(sf::VideoMode( { GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE );
+    m_window.setFramerateLimit(GameConfig::FPS);
+
     InitializeRandomEngine();
+    InitializeFontAndText();
     SpawnBoids();
     GameLoop();
 }
@@ -32,6 +42,7 @@ void Game::GameLoop()
                 m_window.close();
             }
         }
+
         Update(deltaTime);
         Render();
     }
@@ -55,15 +66,15 @@ void Game::Update(float deltaTime)
         {
             if (otherBoid == currentBoid) continue;
             
-            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < PROTECTED_RANGE
-                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < PROTECTED_RANGE)
+            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < GameConfig::PROTECTED_RANGE
+                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < GameConfig::PROTECTED_RANGE)
             {
                 closeDx += currentBoid.GetPosition().x - otherBoid.GetPosition().x;
                 closeDy += currentBoid.GetPosition().y - otherBoid.GetPosition().y;
             }
 
-            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < VISUAL_RANGE
-                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < VISUAL_RANGE)
+            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < GameConfig::VISUAL_RANGE
+                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < GameConfig::VISUAL_RANGE)
             {
                 xVelocityAvg += otherBoid.GetVelocity().x;
                 yVelocityAvg += otherBoid.GetVelocity().y;
@@ -87,13 +98,14 @@ void Game::Update(float deltaTime)
 void Game::Render()
 {
     m_window.clear();
+    m_window.draw(*m_text);
     m_renderer.Draw(m_boidsVector, m_window);
     m_window.display();
 }
 
 void Game::SpawnBoids()
 {
-    for (int i = 0; i < BOIDS_COUNT; ++i)
+    for (int i = 0; i < GameConfig::BOIDS_COUNT; ++i)
     {
         auto currentBoid = Boid(
             i + 1,
@@ -102,8 +114,8 @@ void Game::SpawnBoids()
                  static_cast<float>(m_distributionY(m_rng))
             },
             {
-                std::cos(static_cast<float>(m_distributionAngle(m_rng))) * BOID_MAX_SPEED,
-                std::sin(static_cast<float>(m_distributionAngle(m_rng))) * BOID_MAX_SPEED
+                std::cos(static_cast<float>(m_distributionAngle(m_rng))) * GameConfig::BOID_MAX_SPEED,
+                std::sin(static_cast<float>(m_distributionAngle(m_rng))) * GameConfig::BOID_MAX_SPEED
             });
         m_boidsVector.push_back(currentBoid);
         
@@ -114,8 +126,30 @@ void Game::InitializeRandomEngine()
 {
     std::random_device randomDevice;
     m_rng.seed(randomDevice());
-    m_distributionX = std::uniform_int_distribution<>(0, WINDOW_WIDTH);
-    m_distributionY = std::uniform_int_distribution<>(0, WINDOW_HEIGHT);
+    m_distributionX = std::uniform_int_distribution<>(0, GameConfig::WINDOW_WIDTH);
+    m_distributionY = std::uniform_int_distribution<>(0, GameConfig::WINDOW_HEIGHT);
     m_distributionAngle = std::uniform_real_distribution<>(0, 2 * std::numbers::pi);
+}
+
+void Game::InitializeFontAndText()
+{
+    if (!m_font.openFromFile("assets/font/JetBrainsMono-Regular.ttf"))
+    {
+
+        std::cout << "ERROR: Font Not Loaded" << std::endl;
+        std::cout << std::filesystem::current_path() << '\n';
+    }
+
+
+    m_text = std::make_unique<sf::Text>(m_font);
+
+    m_text->setString("Hello World");
+    m_text->setCharacterSize(24);
+    m_text->setFillColor(sf::Color::Yellow);
+}
+
+void Game::SetText(std::string newText)
+{
+    m_text->setString(newText);
 }
 

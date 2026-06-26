@@ -6,7 +6,7 @@
 #define CMAKESFMLPROJECT_RENDERER_H
 #include <vector>
 
-#include "Boid.h"
+#include "../model/Boid.h"
 #include "SFML/Graphics/ConvexShape.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 
