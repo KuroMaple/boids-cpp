@@ -18,7 +18,7 @@ public:
     [[nodiscard]] sf::Vector2f GetPosition() const { return m_position; }
     [[nodiscard]] sf::Vector2f GetVelocity() const { return m_velocity; }
 
-    static constexpr float RADIUS = 20.f;
+    static constexpr float RADIUS = 5.f;
 
     bool operator==(const Boid& otherBoid) const;
 private:
