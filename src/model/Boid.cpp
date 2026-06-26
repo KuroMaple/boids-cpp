@@ -51,40 +51,23 @@ void Boid::Update(float deltaTime, float closeDx, float closeDy,
     // Turning away from edges
     if (m_position.x < GameConfig::EDGE_MARGIN)
     {
-        const auto turnFactorRatio = (GameConfig::EDGE_MARGIN - m_position.x) / GameConfig::EDGE_MARGIN ;
-        m_velocity.x += GameConfig::TURN_FACTOR * turnFactorRatio;
+        m_velocity.x += GameConfig::TURN_FACTOR ;
     }
     else if (m_position.x > GameConfig::WINDOW_WIDTH - GameConfig::EDGE_MARGIN)
     {
-        const auto turnFactorRatio = (GameConfig::WINDOW_WIDTH - m_position.x) / GameConfig::EDGE_MARGIN ;
-        m_velocity.x -= GameConfig::TURN_FACTOR * turnFactorRatio;
+        m_velocity.x -= GameConfig::TURN_FACTOR ;
     }
     
     if (m_position.y < GameConfig::EDGE_MARGIN)
     {
-        const auto turnFactorRatio = (GameConfig::EDGE_MARGIN - m_position.y) / GameConfig::EDGE_MARGIN ;
-        m_velocity.y += GameConfig::TURN_FACTOR * turnFactorRatio;
+        m_velocity.y += GameConfig::TURN_FACTOR ;
     }
     
     if (m_position.y > GameConfig::WINDOW_HEIGHT - GameConfig::EDGE_MARGIN)
     {
-        const auto turnFactorRatio = (GameConfig::WINDOW_HEIGHT - m_position.y) / GameConfig::EDGE_MARGIN ;
-        m_velocity.y -= GameConfig::TURN_FACTOR * turnFactorRatio;
+        m_velocity.y -= GameConfig::TURN_FACTOR ;
     }
 
-    // Failsafe to keep boids in window
-    sf::Vector2f targetNewPosition = m_position + m_velocity * deltaTime;
-    if (targetNewPosition.x - RADIUS <= 0 && m_velocity.x < 0 ||
-        targetNewPosition.x + RADIUS >= GameConfig::WINDOW_WIDTH && m_velocity.x > 0)
-    {
-       m_velocity.x = -m_velocity.x;
-    }
-    if (targetNewPosition.y - RADIUS <= 0 && m_velocity.y < 0 ||
-        targetNewPosition.y + RADIUS >= GameConfig::WINDOW_HEIGHT && m_velocity.y > 0)
-    {
-        m_velocity.y = -m_velocity.y;
-    }
-    
     m_velocity.x = std::clamp(m_velocity.x, static_cast<float>(-GameConfig::BOID_MAX_SPEED), static_cast<float>(GameConfig::BOID_MAX_SPEED));
     m_velocity.y = std::clamp(m_velocity.y, static_cast<float>(-GameConfig::BOID_MAX_SPEED), static_cast<float>(GameConfig::BOID_MAX_SPEED));
     

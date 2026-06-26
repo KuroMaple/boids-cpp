@@ -53,12 +53,14 @@ void Game::GameLoop()
         auto renderMs = std::chrono::duration<double, std::milli>(frameEnd - updateEnd).count();
         auto frameMs = std::chrono::duration<double, std::milli>(frameEnd - frameStart).count();
         auto fps = 1000.0 / frameMs;
+        std::string optimizeModeText = GameConfig::OPTIMIZATION_ACTIVE ? "ON" : "OFF";
 
         std::string displayText = "Boids: " + std::to_string(GameConfig::BOIDS_COUNT) + "\n"
                                     + "Update: " + std::to_string(updateMs) + " ms \n"
                                     + "Render: " + std::to_string(renderMs) + " ms \n"
                                     + "Frame: " + std::to_string(frameMs) + " ms \n"
-                                    + "FPS: " + std::to_string(fps);
+                                    + "FPS: " + std::to_string(fps) + " \n"
+                                    + "Optimization: " + optimizeModeText;
 
         SetText(displayText);
     }
