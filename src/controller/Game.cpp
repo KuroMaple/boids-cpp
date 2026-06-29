@@ -12,7 +12,7 @@
 Game::Game()
 :
 m_window(
-    sf::VideoMode( { GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE
+    sf::VideoMode( { GameConfig::VISIBLE_WINDOW_WIDTH, GameConfig::VISIBLE_WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE
     ),
 m_renderer(m_window)
 {
@@ -22,8 +22,13 @@ m_renderer(m_window)
 
     // Init Quad tree root
     auto windowAABB = AABB(
-        {GameConfig::WINDOW_WIDTH / GameConfig::TWO_FLOAT, GameConfig::WINDOW_HEIGHT / GameConfig::TWO_FLOAT},
-        GameConfig::WINDOW_WIDTH / GameConfig::TWO_FLOAT, GameConfig::WINDOW_HEIGHT / GameConfig::TWO_FLOAT);
+        {
+            GameConfig::VISIBLE_WINDOW_WIDTH,
+            GameConfig::VISIBLE_WINDOW_HEIGHT
+        },
+        GameConfig::VISIBLE_WINDOW_WIDTH + GameConfig::SIMULATION_BOUNDARY_BUFFER_WIDTH ,
+        GameConfig::VISIBLE_WINDOW_HEIGHT + GameConfig::SIMULATION_BOUNDARY_BUFFER_HEIGHT
+        );
     m_quadTree = std::make_unique<QuadTree>(windowAABB);
 }
 
@@ -34,6 +39,16 @@ void Game::BeginPlay()
     m_window.setFramerateLimit(GameConfig::FPS);
     InitializeRandomEngine();
     SpawnBoids();
+
+    //TEST SECTION
+    if (GameConfig::OPTIMIZATION_ACTIVE)
+    {
+        for (const Boid& currentBoid : m_boidsVector)
+        {
+            m_quadTree->Insert(currentBoid);
+        }
+    }
+    //END OF TEST SECTION
     GameLoop();
 }
 
@@ -71,7 +86,8 @@ void Game::GameLoop()
                                     + "Render: " + std::to_string(renderMs) + " ms \n"
                                     + "Frame: " + std::to_string(frameMs) + " ms \n"
                                     + "FPS: " + std::to_string(fps) + " \n"
-                                    + "Optimization: " + optimizeModeText;
+                                    + "Optimization: " + optimizeModeText + " \n"
+                                    + "Farthest Boid Distance: (" + std::to_string(farthestBoidVector.x) + ", " + std::to_string(farthestBoidVector.y) + ")";
 
         SetText(displayText);
     }
@@ -81,15 +97,19 @@ void Game::Update(float deltaTime)
 {
     if (GameConfig::OPTIMIZATION_ACTIVE)
     {
-        for (const Boid& currentBoid : m_boidsVector)
-        {
-            m_quadTree->Insert(currentBoid);
-        }
+        // for (const Boid& currentBoid : m_boidsVector)
+        // {
+        //     m_quadTree->Insert(currentBoid);
+        // }
     }
     else
     {
         for (auto &currentBoid : m_boidsVector)
         {
+            farthestBoidVector = {
+                std::max(currentBoid.GetPosition().x, farthestBoidVector.x),
+                std::max(currentBoid.GetPosition().y, farthestBoidVector.y)
+            };
             float closeDx = 0;
             float closeDy = 0;
 
@@ -167,8 +187,8 @@ void Game::InitializeRandomEngine()
 {
     std::random_device randomDevice;
     m_rng.seed(randomDevice());
-    m_distributionX = std::uniform_int_distribution<>(0, GameConfig::WINDOW_WIDTH);
-    m_distributionY = std::uniform_int_distribution<>(0, GameConfig::WINDOW_HEIGHT);
+    m_distributionX = std::uniform_int_distribution<>(0, GameConfig::VISIBLE_WINDOW_WIDTH);
+    m_distributionY = std::uniform_int_distribution<>(0, GameConfig::VISIBLE_WINDOW_HEIGHT);
     m_distributionAngle = std::uniform_real_distribution<>(0, 2 * std::numbers::pi);
 }
 

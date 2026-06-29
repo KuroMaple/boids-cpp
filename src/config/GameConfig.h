@@ -12,8 +12,8 @@ struct GameConfig
 {
     // Static
     inline const static std::string WINDOW_TITLE = "Boids CPP";
-    static constexpr int WINDOW_WIDTH = 1000;
-    static constexpr int WINDOW_HEIGHT = 700;
+    static constexpr int VISIBLE_WINDOW_WIDTH = 1000;
+    static constexpr int VISIBLE_WINDOW_HEIGHT = 700;
     static constexpr int FPS = 60;
     static constexpr float TWO_FLOAT = 2.f;
     static constexpr auto BOID_VELOCITY = sf::Vector2f(100, 100);
@@ -28,8 +28,12 @@ struct GameConfig
     static constexpr float CENTERING_FACTOR = 0.0005;
     static constexpr size_t QUAD_TREE_CAPACITY = 4;
 
+
+
     // Commonly Tuned Parameters
-    static constexpr int BOIDS_COUNT = 50;
+    static constexpr int SIMULATION_BOUNDARY_BUFFER_WIDTH = VISIBLE_WINDOW_WIDTH * TWO_FLOAT;
+    static constexpr int SIMULATION_BOUNDARY_BUFFER_HEIGHT = VISIBLE_WINDOW_HEIGHT * TWO_FLOAT;
+    static constexpr int BOIDS_COUNT = 20;
     static constexpr bool OPTIMIZATION_ACTIVE = true;
 };
 #endif //BOIDSCPP_GAMECONFIG_H

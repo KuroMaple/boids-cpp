@@ -53,7 +53,7 @@ void Boid::Update(float deltaTime, float closeDx, float closeDy,
     {
         m_velocity.x += GameConfig::TURN_FACTOR ;
     }
-    else if (m_position.x > GameConfig::WINDOW_WIDTH - GameConfig::EDGE_MARGIN)
+    else if (m_position.x > GameConfig::VISIBLE_WINDOW_WIDTH - GameConfig::EDGE_MARGIN)
     {
         m_velocity.x -= GameConfig::TURN_FACTOR ;
     }
@@ -63,9 +63,23 @@ void Boid::Update(float deltaTime, float closeDx, float closeDy,
         m_velocity.y += GameConfig::TURN_FACTOR ;
     }
     
-    if (m_position.y > GameConfig::WINDOW_HEIGHT - GameConfig::EDGE_MARGIN)
+    if (m_position.y > GameConfig::VISIBLE_WINDOW_HEIGHT - GameConfig::EDGE_MARGIN)
     {
         m_velocity.y -= GameConfig::TURN_FACTOR ;
+    }
+
+    // Ensuring Boids are in contained world space
+    auto targetNewPosition = m_position + m_velocity * deltaTime;
+
+    if (targetNewPosition.x <= -GameConfig::SIMULATION_BOUNDARY_BUFFER_WIDTH && m_velocity.x < 0 ||
+        targetNewPosition.x >= GameConfig::VISIBLE_WINDOW_WIDTH + GameConfig::SIMULATION_BOUNDARY_BUFFER_WIDTH && m_velocity.x > 0)
+    {
+        m_velocity.x = -m_velocity.x;
+    }
+    if (targetNewPosition.y <= -GameConfig::SIMULATION_BOUNDARY_BUFFER_HEIGHT && m_velocity.y < 0 ||
+        targetNewPosition.y >= GameConfig::VISIBLE_WINDOW_HEIGHT + GameConfig::SIMULATION_BOUNDARY_BUFFER_HEIGHT && m_velocity.y > 0)
+    {
+        m_velocity.y = -m_velocity.y;
     }
 
     m_velocity.x = std::clamp(m_velocity.x, static_cast<float>(-GameConfig::BOID_MAX_SPEED), static_cast<float>(GameConfig::BOID_MAX_SPEED));

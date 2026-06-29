@@ -31,7 +31,8 @@ Renderer::Renderer(sf::RenderWindow &gameWindow): m_gameWindow(gameWindow)
 
 void Renderer::Draw(const std::vector<Boid>& boidsVector, const QuadTree& quadTreeRoot)
 {
-    DrawQuadTree(quadTreeRoot);
+    if (GameConfig::OPTIMIZATION_ACTIVE) DrawQuadTree(quadTreeRoot);
+
     for (const Boid& boid : boidsVector)
     {
         const sf::Vector2f boidVelocity = boid.GetVelocity();
@@ -47,8 +48,7 @@ void Renderer::Draw(const std::vector<Boid>& boidsVector, const QuadTree& quadTr
 
 void Renderer::DrawQuadTree(const QuadTree& root)
 {
-    m_rectangleShape = sf::RectangleShape(
-        {root.m_boundary.m_halfWidth * 2.f, root.m_boundary.m_halfHeight * 2.f});
+    m_rectangleShape.setSize({root.m_boundary.m_halfWidth * 2.f, root.m_boundary.m_halfHeight * 2.f});
 
     // Top left corner of AABB
     m_rectangleShape.setPosition(

@@ -4,6 +4,8 @@
 
 #include "QuadTree.h"
 
+#include "SFML/Window/Keyboard.hpp"
+
 AABB::AABB(sf::Vector2f center, float halfWidth, float halfHeight)
 {
     m_center = center;
@@ -17,7 +19,24 @@ bool AABB::ContainsPoint(sf::Vector2f point) const
     const auto max = sf::Vector2f(m_center.x + m_halfWidth, m_center.y + m_halfHeight);
 
 
-    return point.x <= max.x && point.y <= max.y && point.x >= min.x && point.y >= min.y;
+    return point.x <= max.x &&
+           point.y <= max.y &&
+           point.x >= min.x &&
+           point.y >= min.y;
+}
+
+bool AABB::IntersectsAABB(const AABB& other) const
+{
+    auto currentBottomLeft = sf::Vector2f(m_center.x - m_halfWidth, m_center.y + m_halfHeight);
+    auto currentTopRight = sf::Vector2f(m_center.x + m_halfWidth, m_center.y - m_halfHeight);
+
+    auto otherBottomLeft = sf::Vector2f(other.m_center.x - other.m_halfWidth, other.m_center.y + other.m_halfHeight);
+    auto otherTopRight = sf::Vector2f(other.m_center.x + other.m_halfWidth, other.m_center.y - other.m_halfHeight);
+
+    return currentBottomLeft.x < otherTopRight.x &&
+            otherBottomLeft.x < currentTopRight.x &&
+            currentBottomLeft.y > otherTopRight.y &&
+            otherBottomLeft.y > currentTopRight.y;
 }
 
 QuadTree::QuadTree(AABB boundary) : m_boundary(boundary)
@@ -39,8 +58,13 @@ bool QuadTree::Insert(const Boid& boid)
     {
         Subdivide();
     }
-    return topLeft->Insert(boid) || topRight->Insert(boid) ||
-        bottomLeft->Insert(boid) || bottomRight->Insert(boid);
+
+    if (topLeft->Insert(boid)) return true;
+    if (topRight->Insert(boid)) return true;
+    if (bottomLeft->Insert(boid)) return true;
+    if (bottomRight->Insert(boid)) return true;
+
+    return false;
 }
 
 void QuadTree::Subdivide()
@@ -67,5 +91,56 @@ void QuadTree::Subdivide()
             childHalfWidth, childHalfHeight));
 
     m_divided = true;
+}
+
+std::vector<const Boid*> QuadTree::QueryRange(AABB range)
+{
+    std::vector<const Boid*> foundIntersectingBoids;
+    if (!m_boundary.IntersectsAABB(range)) return foundIntersectingBoids;
+
+    for (auto& [m_position, m_boidPointer]: m_quadTreeBoids)
+    {
+        if (range.ContainsPoint(m_position))
+        {
+            foundIntersectingBoids.push_back(m_boidPointer);
+        }
+    }
+
+    if (m_divided)
+    {
+        auto topLeftFound = topLeft->QueryRange(range);
+        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + topLeftFound.size());
+        foundIntersectingBoids.insert(
+            foundIntersectingBoids.end(),
+            topLeftFound.begin(),
+            topLeftFound.end()
+            );
+
+        auto topRightFound = topRight->QueryRange(range);
+        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + topRightFound.size());
+        foundIntersectingBoids.insert(
+            foundIntersectingBoids.end(),
+            topRightFound.begin(),
+            topRightFound.end()
+            );
+
+        auto bottomLeftFound = bottomLeft->QueryRange(range);
+        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + bottomLeftFound.size());
+        foundIntersectingBoids.insert(
+            foundIntersectingBoids.end(),
+            bottomLeftFound.begin(),
+            bottomLeftFound.end()
+            );
+
+        auto bottomRightFound = bottomRight->QueryRange(range);
+        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + bottomRightFound.size());
+        foundIntersectingBoids.insert(
+            foundIntersectingBoids.end(),
+            bottomRightFound.begin(),
+            bottomRightFound.end()
+            );
+    }
+    return foundIntersectingBoids;
+
 }
 

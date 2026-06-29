@@ -33,6 +33,8 @@ private:
     std::unique_ptr<sf::Text> m_text;
     std::unique_ptr<QuadTree> m_quadTree;
 
+    // Testing only
+    sf::Vector2f farthestBoidVector = {0, 0};
     void SpawnBoids();
     void InitializeRandomEngine();
     void InitializeFontAndText();

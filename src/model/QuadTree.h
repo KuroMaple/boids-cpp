@@ -17,7 +17,7 @@ struct AABB
 
     AABB(sf::Vector2f center, float halfWidth, float halfHeight);
     [[nodiscard]] bool ContainsPoint(sf::Vector2f point) const;
-    bool IntersectsAABB(AABB other);
+    bool IntersectsAABB(const AABB & other) const;
 };
 
 struct QuadTreeElement
@@ -44,5 +44,5 @@ struct QuadTree
 
     bool Insert(const Boid& boid);
     void Subdivide();
-    void QueryRange(AABB range);
+    std::vector<const Boid*> QueryRange(AABB range);
 };
