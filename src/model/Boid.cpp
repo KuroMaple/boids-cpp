@@ -70,7 +70,7 @@ void Boid::Update(float deltaTime, float closeDx, float closeDy,
 
     m_velocity.x = std::clamp(m_velocity.x, static_cast<float>(-GameConfig::BOID_MAX_SPEED), static_cast<float>(GameConfig::BOID_MAX_SPEED));
     m_velocity.y = std::clamp(m_velocity.y, static_cast<float>(-GameConfig::BOID_MAX_SPEED), static_cast<float>(GameConfig::BOID_MAX_SPEED));
-    
+
     m_position += m_velocity * deltaTime;
 }
 

@@ -8,7 +8,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "../model/Boid.h"
-#include "../view/Renderer.h"
+#include "../renderer/Renderer.h"
+#include "../model/QuadTree.h"
 
 class Game
 {
@@ -30,11 +31,12 @@ private:
     std::uniform_real_distribution<> m_distributionAngle;
     sf::Font m_font;
     std::unique_ptr<sf::Text> m_text;
+    std::unique_ptr<QuadTree> m_quadTree;
 
     void SpawnBoids();
     void InitializeRandomEngine();
     void InitializeFontAndText();
-    void SetText(std::string newText);
+    void SetText(const std::string& newText) const;
 };
 
 

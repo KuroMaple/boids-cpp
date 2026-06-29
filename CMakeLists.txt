@@ -17,9 +17,11 @@ add_executable(main src/main.cpp
         src/controller/Game.h
         src/model/Boid.cpp
         src/model/Boid.h
-        src/view/Renderer.cpp
-        src/view/Renderer.h
-        src/config/GameConfig.h)
+        src/Renderer/Renderer.cpp
+        src/Renderer/Renderer.h
+        src/config/GameConfig.h
+        src/model/QuadTree.h
+        src/model/QuadTree.cpp)
 
 add_custom_command(TARGET main POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

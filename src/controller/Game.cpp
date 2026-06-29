@@ -7,20 +7,32 @@
 #include <random>
 #include <numbers>
 #include "../config/GameConfig.h"
+#include "../model/QuadTree.h"
 
 Game::Game()
+:
+m_window(
+    sf::VideoMode( { GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE
+    ),
+m_renderer(m_window)
 {
     InitializeFontAndText();
+
+
+
+    // Init Quad tree root
+    auto windowAABB = AABB(
+        {GameConfig::WINDOW_WIDTH / GameConfig::TWO_FLOAT, GameConfig::WINDOW_HEIGHT / GameConfig::TWO_FLOAT},
+        GameConfig::WINDOW_WIDTH / GameConfig::TWO_FLOAT, GameConfig::WINDOW_HEIGHT / GameConfig::TWO_FLOAT);
+    m_quadTree = std::make_unique<QuadTree>(windowAABB);
 }
 
 void Game::BeginPlay()
 {
-    if (m_window.isOpen()) return;
     
-    m_window.create(sf::VideoMode( { GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE );
+    //m_window.create(sf::VideoMode( { GameConfig::WINDOW_WIDTH, GameConfig::WINDOW_HEIGHT } ), GameConfig::WINDOW_TITLE );
     m_window.setFramerateLimit(GameConfig::FPS);
     InitializeRandomEngine();
-    InitializeFontAndText();
     SpawnBoids();
     GameLoop();
 }
@@ -67,55 +79,67 @@ void Game::GameLoop()
 
 void Game::Update(float deltaTime)
 {
-    for (auto &currentBoid : m_boidsVector)
+    if (GameConfig::OPTIMIZATION_ACTIVE)
     {
-        float closeDx = 0;
-        float closeDy = 0;
-
-        float xVelocityAvg = 0;
-        float yVelocityAvg = 0;
-        int neighbouringBoids = 0;
-
-        float xPositionAvg = 0;
-        float yPositionAvg = 0;
-        
-        for (auto &otherBoid : m_boidsVector)
+        for (const Boid& currentBoid : m_boidsVector)
         {
-            if (otherBoid == currentBoid) continue;
-            
-            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < GameConfig::PROTECTED_RANGE
-                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < GameConfig::PROTECTED_RANGE)
-            {
-                closeDx += currentBoid.GetPosition().x - otherBoid.GetPosition().x;
-                closeDy += currentBoid.GetPosition().y - otherBoid.GetPosition().y;
-            }
-
-            if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < GameConfig::VISUAL_RANGE
-                && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < GameConfig::VISUAL_RANGE)
-            {
-                xVelocityAvg += otherBoid.GetVelocity().x;
-                yVelocityAvg += otherBoid.GetVelocity().y;
-
-                xPositionAvg += otherBoid.GetPosition().x;
-                yPositionAvg += otherBoid.GetPosition().y;
-                
-                ++neighbouringBoids;
-            }
+            m_quadTree->Insert(currentBoid);
         }
-        
-        xVelocityAvg /= neighbouringBoids;
-        yVelocityAvg /= neighbouringBoids;
-        xPositionAvg /= neighbouringBoids;
-        yPositionAvg /= neighbouringBoids;
-        
-        currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg, xPositionAvg, yPositionAvg);
     }
+    else
+    {
+        for (auto &currentBoid : m_boidsVector)
+        {
+            float closeDx = 0;
+            float closeDy = 0;
+
+            float xVelocityAvg = 0;
+            float yVelocityAvg = 0;
+            int neighbouringBoids = 0;
+
+            float xPositionAvg = 0;
+            float yPositionAvg = 0;
+
+            for (auto &otherBoid : m_boidsVector)
+            {
+                if (otherBoid == currentBoid) continue;
+
+                if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < GameConfig::PROTECTED_RANGE
+                    && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < GameConfig::PROTECTED_RANGE)
+                {
+                    closeDx += currentBoid.GetPosition().x - otherBoid.GetPosition().x;
+                    closeDy += currentBoid.GetPosition().y - otherBoid.GetPosition().y;
+                }
+
+                if (std::abs(currentBoid.GetPosition().x - otherBoid.GetPosition().x) < GameConfig::VISUAL_RANGE
+                    && std::abs(currentBoid.GetPosition().y - otherBoid.GetPosition().y) < GameConfig::VISUAL_RANGE)
+                {
+                    xVelocityAvg += otherBoid.GetVelocity().x;
+                    yVelocityAvg += otherBoid.GetVelocity().y;
+
+                    xPositionAvg += otherBoid.GetPosition().x;
+                    yPositionAvg += otherBoid.GetPosition().y;
+
+                    ++neighbouringBoids;
+                }
+            }
+
+            xVelocityAvg /= neighbouringBoids;
+            yVelocityAvg /= neighbouringBoids;
+            xPositionAvg /= neighbouringBoids;
+            yPositionAvg /= neighbouringBoids;
+
+            currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg, xPositionAvg, yPositionAvg);
+        }
+    }
+
+
 }
 
 void Game::Render()
 {
     m_window.clear(sf::Color(34, 36, 42));
-    m_renderer.Draw(m_boidsVector, m_window);
+    m_renderer.Draw(m_boidsVector, *m_quadTree);
     m_window.draw(*m_text);
     m_window.display();
 }
@@ -165,7 +189,7 @@ void Game::InitializeFontAndText()
     m_text->setFillColor(sf::Color::Yellow);
 }
 
-void Game::SetText(std::string newText)
+void Game::SetText(const std::string& newText) const
 {
     m_text->setString(newText);
 }
