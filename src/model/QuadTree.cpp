@@ -93,54 +93,37 @@ void QuadTree::Subdivide()
     m_divided = true;
 }
 
-std::vector<const Boid*> QuadTree::QueryRange(AABB range)
+void QuadTree::QueryRange(AABB range, std::vector<const Boid*>& foundBoids)
 {
-    std::vector<const Boid*> foundIntersectingBoids;
-    if (!m_boundary.IntersectsAABB(range)) return foundIntersectingBoids;
+    if (!m_boundary.IntersectsAABB(range)) return;
 
     for (auto& [m_position, m_boidPointer]: m_quadTreeBoids)
     {
         if (range.ContainsPoint(m_position))
         {
-            foundIntersectingBoids.push_back(m_boidPointer);
+            foundBoids.push_back(m_boidPointer);
         }
     }
 
     if (m_divided)
     {
-        auto topLeftFound = topLeft->QueryRange(range);
-        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + topLeftFound.size());
-        foundIntersectingBoids.insert(
-            foundIntersectingBoids.end(),
-            topLeftFound.begin(),
-            topLeftFound.end()
-            );
-
-        auto topRightFound = topRight->QueryRange(range);
-        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + topRightFound.size());
-        foundIntersectingBoids.insert(
-            foundIntersectingBoids.end(),
-            topRightFound.begin(),
-            topRightFound.end()
-            );
-
-        auto bottomLeftFound = bottomLeft->QueryRange(range);
-        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + bottomLeftFound.size());
-        foundIntersectingBoids.insert(
-            foundIntersectingBoids.end(),
-            bottomLeftFound.begin(),
-            bottomLeftFound.end()
-            );
-
-        auto bottomRightFound = bottomRight->QueryRange(range);
-        foundIntersectingBoids.reserve(foundIntersectingBoids.size() + bottomRightFound.size());
-        foundIntersectingBoids.insert(
-            foundIntersectingBoids.end(),
-            bottomRightFound.begin(),
-            bottomRightFound.end()
-            );
+        topLeft->QueryRange(range, foundBoids);
+        topRight->QueryRange(range, foundBoids);
+        bottomLeft->QueryRange(range, foundBoids);
+        bottomRight->QueryRange(range, foundBoids);
     }
-    return foundIntersectingBoids;
+}
 
+void QuadTree::ClearRootTree()
+{
+    m_quadTreeBoids.clear();
+    if (m_divided)
+    {
+        topLeft.reset();
+        topRight.reset();
+        bottomLeft.reset();
+        bottomRight.reset();
+        m_divided = false;
+    }
 }
 

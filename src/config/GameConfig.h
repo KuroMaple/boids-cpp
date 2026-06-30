@@ -33,7 +33,7 @@ struct GameConfig
     // Commonly Tuned Parameters
     static constexpr int SIMULATION_BOUNDARY_BUFFER_WIDTH = VISIBLE_WINDOW_WIDTH * TWO_FLOAT;
     static constexpr int SIMULATION_BOUNDARY_BUFFER_HEIGHT = VISIBLE_WINDOW_HEIGHT * TWO_FLOAT;
-    static constexpr int BOIDS_COUNT = 20;
+    static constexpr int BOIDS_COUNT = 10000;
     static constexpr bool OPTIMIZATION_ACTIVE = true;
 };
 #endif //BOIDSCPP_GAMECONFIG_H

@@ -19,6 +19,7 @@ public:
     Renderer(sf::RenderWindow &gameWindow);
     void Draw(const std::vector<Boid>& boidsVector, const QuadTree& quadTreeRoot);
 
+    void DrawQueryRectangle(sf::Vector2f position);
 private:
     sf::ConvexShape m_boidShape;
     sf::RectangleShape m_rectangleShape;

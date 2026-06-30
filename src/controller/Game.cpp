@@ -39,16 +39,6 @@ void Game::BeginPlay()
     m_window.setFramerateLimit(GameConfig::FPS);
     InitializeRandomEngine();
     SpawnBoids();
-
-    //TEST SECTION
-    if (GameConfig::OPTIMIZATION_ACTIVE)
-    {
-        for (const Boid& currentBoid : m_boidsVector)
-        {
-            m_quadTree->Insert(currentBoid);
-        }
-    }
-    //END OF TEST SECTION
     GameLoop();
 }
 
@@ -86,8 +76,7 @@ void Game::GameLoop()
                                     + "Render: " + std::to_string(renderMs) + " ms \n"
                                     + "Frame: " + std::to_string(frameMs) + " ms \n"
                                     + "FPS: " + std::to_string(fps) + " \n"
-                                    + "Optimization: " + optimizeModeText + " \n"
-                                    + "Farthest Boid Distance: (" + std::to_string(farthestBoidVector.x) + ", " + std::to_string(farthestBoidVector.y) + ")";
+                                    + "Optimization: " + optimizeModeText;
 
         SetText(displayText);
     }
@@ -97,18 +86,81 @@ void Game::Update(float deltaTime)
 {
     if (GameConfig::OPTIMIZATION_ACTIVE)
     {
-        // for (const Boid& currentBoid : m_boidsVector)
-        // {
-        //     m_quadTree->Insert(currentBoid);
-        // }
+        // Re-construct Quad tree
+        m_quadTree->ClearRootTree();
+        for (const Boid& currentBoid : m_boidsVector)
+        {
+            m_quadTree->Insert(currentBoid);
+        }
+
+        // Loop through each Boid and perform the algorithm
+        for (auto &currentBoid : m_boidsVector)
+        {
+            float closeDx = 0;
+            float closeDy = 0;
+
+            float xVelocityAvg = 0;
+            float yVelocityAvg = 0;
+            int neighbouringBoids = 0;
+
+            float xPositionAvg = 0;
+            float yPositionAvg = 0;
+
+            // Protected Range Calculations
+            auto protectedAABB = AABB(
+                currentBoid.GetPosition(),
+                GameConfig::PROTECTED_RANGE / GameConfig::TWO_FLOAT,
+                GameConfig::PROTECTED_RANGE / GameConfig::TWO_FLOAT);
+
+            m_foundBoids.clear();
+            m_quadTree->QueryRange(protectedAABB, m_foundBoids);
+            for (const auto &otherBoid : m_foundBoids)
+            {
+                if (otherBoid == &currentBoid) continue;
+
+                closeDx += currentBoid.GetPosition().x - otherBoid->GetPosition().x;
+                closeDy += currentBoid.GetPosition().y - otherBoid->GetPosition().y;
+            }
+
+            // Visual Range Calculations
+            auto visualAABB = AABB(
+                currentBoid.GetPosition(),
+                GameConfig::VISUAL_RANGE / GameConfig::TWO_FLOAT,
+                GameConfig::VISUAL_RANGE / GameConfig::TWO_FLOAT);
+
+
+            m_foundBoids.clear();
+            m_quadTree->QueryRange(visualAABB, m_foundBoids);
+            for (const auto &otherBoid : m_foundBoids)
+            {
+                if (otherBoid == &currentBoid) continue;
+
+                xVelocityAvg += otherBoid->GetVelocity().x;
+                yVelocityAvg += otherBoid->GetVelocity().y;
+
+                xPositionAvg += otherBoid->GetPosition().x;
+                yPositionAvg += otherBoid->GetPosition().y;
+
+                ++neighbouringBoids;
+            }
+
+
+
+            xVelocityAvg /= neighbouringBoids;
+            yVelocityAvg /= neighbouringBoids;
+            xPositionAvg /= neighbouringBoids;
+            yPositionAvg /= neighbouringBoids;
+
+            currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg, xPositionAvg, yPositionAvg);
+        }
     }
     else
     {
         for (auto &currentBoid : m_boidsVector)
         {
-            farthestBoidVector = {
-                std::max(currentBoid.GetPosition().x, farthestBoidVector.x),
-                std::max(currentBoid.GetPosition().y, farthestBoidVector.y)
+            m_farthestBoidVector = {
+                std::max(currentBoid.GetPosition().x, m_farthestBoidVector.x),
+                std::max(currentBoid.GetPosition().y, m_farthestBoidVector.y)
             };
             float closeDx = 0;
             float closeDy = 0;

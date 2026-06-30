@@ -44,5 +44,6 @@ struct QuadTree
 
     bool Insert(const Boid& boid);
     void Subdivide();
-    std::vector<const Boid*> QueryRange(AABB range);
+    void QueryRange(AABB range, std::vector<const Boid*>& foundBoids);
+    void ClearRootTree();
 };
