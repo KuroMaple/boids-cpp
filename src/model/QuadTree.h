@@ -23,8 +23,7 @@ struct AABB
 struct QuadTreeElement
 {
     sf::Vector2f m_position;
-    const Boid* m_boidPointer;
-
+    const Boid* m_boidPointer = nullptr;
 };
 struct QuadTree
 {

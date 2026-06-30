@@ -18,7 +18,7 @@ m_renderer(m_window)
 {
     InitializeFontAndText();
 
-
+    m_foundBoids.reserve(GameConfig::BOIDS_COUNT);
 
     // Init Quad tree root
     auto windowAABB = AABB(
@@ -106,28 +106,13 @@ void Game::Update(float deltaTime)
             float xPositionAvg = 0;
             float yPositionAvg = 0;
 
-            // Protected Range Calculations
-            auto protectedAABB = AABB(
-                currentBoid.GetPosition(),
-                GameConfig::PROTECTED_RANGE / GameConfig::TWO_FLOAT,
-                GameConfig::PROTECTED_RANGE / GameConfig::TWO_FLOAT);
+            const auto& currentBoidPosition = currentBoid.GetPosition();
 
-            m_foundBoids.clear();
-            m_quadTree->QueryRange(protectedAABB, m_foundBoids);
-            for (const auto &otherBoid : m_foundBoids)
-            {
-                if (otherBoid == &currentBoid) continue;
-
-                closeDx += currentBoid.GetPosition().x - otherBoid->GetPosition().x;
-                closeDy += currentBoid.GetPosition().y - otherBoid->GetPosition().y;
-            }
-
-            // Visual Range Calculations
-            auto visualAABB = AABB(
-                currentBoid.GetPosition(),
+            // Range Calculations
+            const auto visualAABB = AABB(
+                currentBoidPosition,
                 GameConfig::VISUAL_RANGE / GameConfig::TWO_FLOAT,
                 GameConfig::VISUAL_RANGE / GameConfig::TWO_FLOAT);
-
 
             m_foundBoids.clear();
             m_quadTree->QueryRange(visualAABB, m_foundBoids);
@@ -135,21 +120,38 @@ void Game::Update(float deltaTime)
             {
                 if (otherBoid == &currentBoid) continue;
 
-                xVelocityAvg += otherBoid->GetVelocity().x;
-                yVelocityAvg += otherBoid->GetVelocity().y;
+                const auto& otherBoidPosition = otherBoid->GetPosition();
+                const auto& otherBoidVelocity = otherBoid->GetVelocity();
 
-                xPositionAvg += otherBoid->GetPosition().x;
-                yPositionAvg += otherBoid->GetPosition().y;
+                const float deltaX = currentBoidPosition.x - otherBoidPosition.x;
+                const float deltaY = currentBoidPosition.y - otherBoidPosition.y;
 
-                ++neighbouringBoids;
+                const float distanceSquared = deltaX*deltaX + deltaY*deltaY;
+
+                if (distanceSquared < GameConfig::PROTECTED_RANGE_SQUARED)
+                {
+                    closeDx += currentBoidPosition.x - otherBoidPosition.x;
+                    closeDy += currentBoidPosition.y - otherBoidPosition.y;
+                }
+                if (distanceSquared < GameConfig::VISUAL_RANGE_SQUARED)
+                {
+                    xVelocityAvg += otherBoidVelocity.x;
+                    yVelocityAvg += otherBoidVelocity.y;
+
+                    xPositionAvg += otherBoidPosition.x;
+                    yPositionAvg += otherBoidPosition.y;
+
+                    ++neighbouringBoids;
+                }
             }
 
-
-
-            xVelocityAvg /= neighbouringBoids;
-            yVelocityAvg /= neighbouringBoids;
-            xPositionAvg /= neighbouringBoids;
-            yPositionAvg /= neighbouringBoids;
+            if (neighbouringBoids > 0)
+            {
+                xVelocityAvg /= neighbouringBoids;
+                yVelocityAvg /= neighbouringBoids;
+                xPositionAvg /= neighbouringBoids;
+                yPositionAvg /= neighbouringBoids;
+            }
 
             currentBoid.Update(deltaTime, closeDx, closeDy, neighbouringBoids, xVelocityAvg, yVelocityAvg, xPositionAvg, yPositionAvg);
         }

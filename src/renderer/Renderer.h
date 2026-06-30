@@ -16,10 +16,10 @@
 class Renderer
 {
 public:
-    Renderer(sf::RenderWindow &gameWindow);
+    explicit Renderer(sf::RenderWindow &gameWindow);
     void Draw(const std::vector<Boid>& boidsVector, const QuadTree& quadTreeRoot);
 
-    void DrawQueryRectangle(sf::Vector2f position);
+    void DrawQueryRectangle(const sf::Vector2f& position, const sf::Vector2f& size) const;
 private:
     sf::ConvexShape m_boidShape;
     sf::RectangleShape m_rectangleShape;

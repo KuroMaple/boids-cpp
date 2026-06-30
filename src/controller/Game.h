@@ -32,10 +32,10 @@ private:
     sf::Font m_font;
     std::unique_ptr<sf::Text> m_text;
     std::unique_ptr<QuadTree> m_quadTree;
-
+    std::vector<const Boid*> m_foundBoids;
     // Testing only
     sf::Vector2f m_farthestBoidVector = {0, 0};
-    std::vector<const Boid*> m_foundBoids;
+
 
     void SpawnBoids();
     void InitializeRandomEngine();

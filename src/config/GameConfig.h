@@ -16,12 +16,15 @@ struct GameConfig
     static constexpr int VISIBLE_WINDOW_HEIGHT = 700;
     static constexpr int FPS = 60;
     static constexpr float TWO_FLOAT = 2.f;
+    static constexpr float TEN_FLOAT = 10.f;
     static constexpr auto BOID_VELOCITY = sf::Vector2f(100, 100);
     static constexpr float TURN_FACTOR = 5;
     static constexpr float PROTECTED_RANGE = 10;
+    static constexpr float PROTECTED_RANGE_SQUARED = PROTECTED_RANGE * PROTECTED_RANGE;
     static constexpr int EDGE_MARGIN = 100;
     static constexpr float AVOID_FACTOR = 0.03;
     static constexpr float VISUAL_RANGE = 40;
+    static constexpr float VISUAL_RANGE_SQUARED = VISUAL_RANGE * VISUAL_RANGE;
     static constexpr float MATCHING_FACTOR = 0.02;
     static constexpr float BOID_MIN_SPEED = 150;
     static constexpr int BOID_MAX_SPEED = 200;
@@ -30,10 +33,12 @@ struct GameConfig
 
 
 
+
     // Commonly Tuned Parameters
     static constexpr int SIMULATION_BOUNDARY_BUFFER_WIDTH = VISIBLE_WINDOW_WIDTH * TWO_FLOAT;
     static constexpr int SIMULATION_BOUNDARY_BUFFER_HEIGHT = VISIBLE_WINDOW_HEIGHT * TWO_FLOAT;
-    static constexpr int BOIDS_COUNT = 10000;
-    static constexpr bool OPTIMIZATION_ACTIVE = true;
+    static constexpr int BOIDS_COUNT = 5;
+    static constexpr bool OPTIMIZATION_ACTIVE = false;
+    static constexpr bool SHOW_LINES = true;
 };
 #endif //BOIDSCPP_GAMECONFIG_H

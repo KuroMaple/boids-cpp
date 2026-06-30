@@ -31,10 +31,10 @@ Renderer::Renderer(sf::RenderWindow &gameWindow): m_gameWindow(gameWindow)
 
 void Renderer::Draw(const std::vector<Boid>& boidsVector, const QuadTree& quadTreeRoot)
 {
-    // if (GameConfig::OPTIMIZATION_ACTIVE)
-    // {
-    //     DrawQuadTree(quadTreeRoot);
-    // }
+    if (GameConfig::OPTIMIZATION_ACTIVE && GameConfig::SHOW_LINES)
+    {
+        DrawQuadTree(quadTreeRoot);
+    }
 
     for (const Boid& boid : boidsVector)
     {
@@ -49,15 +49,10 @@ void Renderer::Draw(const std::vector<Boid>& boidsVector, const QuadTree& quadTr
     }
 }
 
-void Renderer::DrawQueryRectangle(sf::Vector2f position)
+void Renderer::DrawQueryRectangle(const sf::Vector2f& position, const sf::Vector2f& size) const
 {
-    // 1. Create a rectangle with a size of 150 by 80 pixels
-    sf::RectangleShape rectangle({250.f, 250.f});
-
-    // 2. Set the position (x, y coordinates) on the screen
+    sf::RectangleShape rectangle(size);
     rectangle.setPosition(position);
-
-    // 3. Set the fill color (e.g., green) and outline
     rectangle.setFillColor(sf::Color::Transparent);
     rectangle.setOutlineColor(sf::Color::Green);
     rectangle.setOutlineThickness(1.f);
