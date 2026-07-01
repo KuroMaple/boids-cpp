@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(CMakeSFMLProject LANGUAGES CXX)
+project(BoidsCPP LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -13,12 +13,26 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 add_executable(main src/main.cpp
-        src/Game.cpp
-        src/Game.h
-        src/Boid.cpp
-        src/Boid.h
-        src/Renderer.cpp
-        src/Renderer.h)
+        src/controller/Game.cpp
+        src/controller/Game.h
+        src/model/Boid.cpp
+        src/model/Boid.h
+        src/renderer/Renderer.cpp
+        src/renderer/Renderer.h
+        src/config/GameConfig.h
+        src/model/QuadTree.h
+        src/model/QuadTree.cpp)
+
+add_custom_command(TARGET main POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets
+)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 target_compile_features(main PRIVATE cxx_std_23)
 target_link_libraries(main PRIVATE SFML::Graphics)
 
