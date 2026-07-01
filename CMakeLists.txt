@@ -17,8 +17,8 @@ add_executable(main src/main.cpp
         src/controller/Game.h
         src/model/Boid.cpp
         src/model/Boid.h
-        src/Renderer/Renderer.cpp
-        src/Renderer/Renderer.h
+        src/renderer/Renderer.cpp
+        src/renderer/Renderer.h
         src/config/GameConfig.h
         src/model/QuadTree.h
         src/model/QuadTree.cpp)

@@ -72,10 +72,10 @@ void Game::GameLoop()
         std::string optimizeModeText = GameConfig::OPTIMIZATION_ACTIVE ? "ON" : "OFF";
 
         std::string displayText = "Boids: " + std::to_string(GameConfig::BOIDS_COUNT) + "\n"
-                                    + "Update: " + std::to_string(updateMs) + " ms \n"
-                                    + "Render: " + std::to_string(renderMs) + " ms \n"
-                                    + "Frame: " + std::to_string(frameMs) + " ms \n"
-                                    + "FPS: " + std::to_string(fps) + " \n"
+                                    // + "Update: " + std::to_string(updateMs) + " ms \n"
+                                    // + "Render: " + std::to_string(renderMs) + " ms \n"
+                                    // + "Frame: " + std::to_string(frameMs) + " ms \n"
+                                    + "FPS: " + std::format("{:.0f}", fps) + " \n"
                                     + "Optimization: " + optimizeModeText;
 
         SetText(displayText);
