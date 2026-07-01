@@ -6,6 +6,7 @@
 #include "Boid.h"
 #include "../config/GameConfig.h"
 #include "SFML/System/Vector2.hpp"
+#include <memory>
 
 
 

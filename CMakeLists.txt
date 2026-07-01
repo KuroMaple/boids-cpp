@@ -29,6 +29,10 @@ add_custom_command(TARGET main POST_BUILD
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets
 )
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 target_compile_features(main PRIVATE cxx_std_23)
 target_link_libraries(main PRIVATE SFML::Graphics)
 
